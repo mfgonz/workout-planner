@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es" class="min-h-screen bg-[#f4f5f9] text-slate-800">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>FitFlow - Rutina Gym & Tobillo</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#10288C',
+            brandCream: '#EAF6AD',
+            brandPurple: '#6338EE',
+            brandLime: '#B6DB00',
+            brandBlue: '#274DEA',
+            appBg: '#f4f5f9',
+            cardBg: '#ffffff',
+            softBorder: '#e2e8f0',
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f4f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .glass-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px -2px rgba(16, 40, 140, 0.04);
+    }
+    
+    .tab-btn {
+      white-space: nowrap;
+      transition: all 0.2s ease-in-out;
+    }
+    
+    .tab-active {
+      background-color: #6338EE !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 12px rgba(99, 56, 238, 0.25);
+      border-color: #6338EE !important;
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 0.75rem;
+      background-color: #0f172a;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-[#EAF6AD] selection:text-[#10288C] pb-36 bg-[#f4f5f9] text-slate-800 overflow-y-auto">
+
+  <!-- UNIFIED TOP BAR & DAY NAVIGATION -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+    <!-- App Header Info -->
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#6338EE]/10 flex items-center justify-center text-[#6338EE] shadow-sm border border-[#6338EE]/20">
+          <i class="fa-solid fa-dumbbell text-base"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-sm sm:text-base leading-tight text-slate-800 flex items-center gap-2">
+            FitFlow Gym & Rehab
+            <span class="bg-[#B6DB00]/30 text-slate-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-[#B6DB00]">4 Días/Sem</span>
+          </h1>
+          <!-- Weight removed as requested -->
+          <p class="text-[11px] text-slate-500 font-medium">31 años • 1.70m • Tobillo Derecho</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY SELECTOR TABS -->
+    <div class="bg-slate-50/90 border-t border-slate-200 px-3 py-2 overflow-x-auto no-scrollbar">
+      <div class="max-w-4xl mx-auto flex items-center gap-2 min-w-max">
+        <button onclick="switchTab('tobillo')" id="tab-btn-tobillo" class="tab-btn tab-active px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200 text-slate-600 bg-white hover:bg-slate-100">
+          <i class="fa-solid fa-kit-medical text-xs"></i>
+          <span>🦶 Tobillo & Rehab</span>
+        </button>
+        <button onclick="switchTab('lunes')" id="tab-btn-lunes" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-calendar-day text-xs"></i>
+          <span>Lun: Pierna</span>
+        </button>
+        <button onclick="switchTab('martes')" id="tab-btn-martes" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-calendar-day text-xs"></i>
+          <span>Mar: Torso & Core</span>
+        </button>
+        <button onclick="switchTab('jueves')" id="tab-btn-jueves" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-calendar-day text-xs"></i>
+          <span>Jue: Pierna/Glúteo</span>
+        </button>
+        <button onclick="switchTab('viernes')" id="tab-btn-viernes" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-calendar-day text-xs"></i>
+          <span>Vie: Torso & Brazos</span>
+        </button>
+        <button onclick="switchTab('progreso')" id="tab-btn-progreso" class="tab-btn bg-white text-slate-600 hover:bg-slate-100 px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-chart-line text-xs"></i>
+          <span>Bitácora</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-4xl mx-auto w-full px-4 pt-4 flex-1">
+    
+    <!-- ANKLE ALERT BANNER -->
+    <div id="ankle-alert-banner" class="mb-4 p-3.5 rounded-2xl bg-[#EAF6AD]/40 border border-[#B6DB00] text-slate-800 text-xs flex items-start gap-3 shadow-sm">
+      <div class="p-2 bg-[#B6DB00]/40 rounded-xl text-slate-900 shrink-0 border border-[#B6DB00] mt-0.5">
+        <i class="fa-solid fa-shield-halved text-base"></i>
+      </div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-900 mb-0.5 flex items-center justify-between text-xs sm:text-sm">
+          <span>Protocolo Tobillo Derecho</span>
+          <button onclick="document.getElementById('ankle-alert-banner').remove()" class="text-slate-600 hover:text-slate-900">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+        <p class="text-slate-700 leading-relaxed text-[11px] sm:text-xs">
+          Ejecuta este bloque los <strong class="text-[#10288C] font-extrabold">Lunes y Jueves</strong> antes de cargar pesas para dar estabilidad articular a tu esguince en recuperación.
+        </p>
+      </div>
+    </div>
+
+    <!-- TAB 1: TOBILLO REHAB -->
+    <div id="content-tobillo" class="tab-content space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-kit-medical text-[#6338EE]"></i>
+            Fortalecimiento de Tobillo Derecho
+          </h2>
+          <p class="text-xs text-slate-500">Protocolo de 4 ejercicios de rehabilitación</p>
+        </div>
+        <span class="text-xs bg-[#6338EE]/10 text-[#6338EE] border border-[#6338EE]/20 font-bold px-3 py-1 rounded-full">10 Min</span>
+      </div>
+
+      <!-- EXERCISE 1 -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="flex-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Movilidad Articular</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">1. Dorsiflexión de Tobillo con Banda</h3>
+          </div>
+          <span class="text-xs font-semibold text-[#10288C] bg-[#274DEA]/10 px-2.5 py-1 rounded-lg border border-[#274DEA]/20">2 series x 12 reps</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <i class="fa-solid fa-circle-info text-[#6338EE] mr-1"></i>
+          <strong>Técnica:</strong> Engancha la banda a un soporte bajo y al tobillo. Desplaza la rodilla hacia adelante sobre la punta del pie manteniendo el talón firme en el suelo.
+        </p>
+
+        <!-- EMBEDDED YOUTUBE VIDEO FIXED NO-COOKIE & REFERRER -->
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/ILSbK8RnGdI?rel=0" 
+            title="Banded Ankle Dorsiflexion" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 1
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 2
+            </label>
+          </div>
+          <button onclick="startTimer(45)" class="text-xs bg-[#6338EE]/10 hover:bg-[#6338EE]/20 text-[#6338EE] font-bold px-3 py-1.5 rounded-xl border border-[#6338EE]/20 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 45s
+          </button>
+        </div>
+      </div>
+
+      <!-- EXERCISE 2 -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="flex-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Fortalecimiento Peroneo</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">2. Eversión e Inversión con Banda</h3>
+          </div>
+          <span class="text-xs font-semibold text-[#10288C] bg-[#274DEA]/10 px-2.5 py-1 rounded-lg border border-[#274DEA]/20">2 series x 15 reps</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <i class="fa-solid fa-circle-info text-[#6338EE] mr-1"></i>
+          <strong>Técnica:</strong> Mueve el pie derecho hacia afuera (eversión) venciendo la resistencia de la banda sin rotar la cadera.
+        </p>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/xfrncpP5ONQ?rel=0" 
+            title="Ankle Eversion with Resistance Band" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 1
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 2
+            </label>
+          </div>
+          <button onclick="startTimer(45)" class="text-xs bg-[#6338EE]/10 hover:bg-[#6338EE]/20 text-[#6338EE] font-bold px-3 py-1.5 rounded-xl border border-[#6338EE]/20 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 45s
+          </button>
+        </div>
+      </div>
+
+      <!-- EXERCISE 3 -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="flex-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Control Excéntrico</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">3. Elevación Excéntrica Unilateral de Talón</h3>
+          </div>
+          <span class="text-xs font-semibold text-[#10288C] bg-[#274DEA]/10 px-2.5 py-1 rounded-lg border border-[#274DEA]/20">2 series x 10 reps</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <i class="fa-solid fa-circle-info text-[#6338EE] mr-1"></i>
+          <strong>Técnica:</strong> Sube en un escalón con ambos pies y desciende bajando el talón derecho lentamente en 3 segundos.
+        </p>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/3tc0lN_bW5o?rel=0" 
+            title="Eccentric Heel Drop Tutorial" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 1
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 transition text-xs font-medium text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> Serie 2
+            </label>
+          </div>
+          <button onclick="startTimer(45)" class="text-xs bg-[#6338EE]/10 hover:bg-[#6338EE]/20 text-[#6338EE] font-bold px-3 py-1.5 rounded-xl border border-[#6338EE]/20 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 45s
+          </button>
+        </div>
+      </div>
+
+      <!-- EXERCISE 4 -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="flex-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Equilibrio & Propiocepción</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">4. Equilibrio Monopodal (1 Pie)</h3>
+          </div>
+          <span class="text-xs font-semibold text-[#10288C] bg-[#274DEA]/10 px-2.5 py-1 rounded-lg border border-[#274DEA]/20">3 series x 30 seg</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <i class="fa-solid fa-circle-info text-[#6338EE] mr-1"></i>
+          <strong>Técnica:</strong> Mantén el equilibrio sobre el pie derecho con la rodilla levemente semiflexionada.
+        </p>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/7SF7AYh2_Yw?rel=0" 
+            title="Single Leg Balance Exercise" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-1.5">
+            <label class="flex items-center gap-1 cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl border border-slate-200 transition text-xs text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> S1
+            </label>
+            <label class="flex items-center gap-1 cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl border border-slate-200 transition text-xs text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> S2
+            </label>
+            <label class="flex items-center gap-1 cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl border border-slate-200 transition text-xs text-slate-700">
+              <input type="checkbox" onchange="toggleSet(this)" class="w-4 h-4 rounded text-[#6338EE]"> S3
+            </label>
+          </div>
+          <button onclick="startTimer(30)" class="text-xs bg-[#6338EE] hover:bg-[#10288C] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-play"></i> Timer 30s
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: LUNES (PIERNA) -->
+    <div id="content-lunes" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-person-running text-[#274DEA]"></i>
+            Lunes: Pierna & Glúteo (Cuádriceps)
+          </h2>
+          <p class="text-xs text-slate-500">Estimulación articular segura y desarrollo muscular</p>
+        </div>
+        <span class="text-xs bg-[#274DEA]/10 text-[#274DEA] border border-[#274DEA]/20 font-bold px-3 py-1 rounded-full">45 Min</span>
+      </div>
+
+      <!-- Prensa de Piernas -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#274DEA]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#274DEA] bg-[#274DEA]/10 px-2 py-0.5 rounded-md">Cuádriceps / Base</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">1. Prensa de Piernas (Leg Press)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">3 series x 10-12 reps</span>
+        </div>
+        
+        <div class="text-xs text-slate-800 bg-[#EAF6AD]/50 border border-[#B6DB00] p-3 rounded-xl mb-3 flex items-start gap-2">
+          <i class="fa-solid fa-shield-halved text-[#10288C] text-sm mt-0.5"></i>
+          <span><strong>Protección de Tobillo:</strong> Ubica los pies en la parte media-alta de la plataforma para reducir la flexión severa del tobillo derecho.</span>
+        </div>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/nDh_BlnLCGc?rel=0" 
+            title="How To Leg Press With Perfect Technique" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="number" id="weight-prensa" placeholder="Peso (lbs)" class="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#274DEA]" onblur="saveWeight('prensa', this.value)">
+            <div class="flex items-center gap-1.5">
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S1</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S2</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S3</label>
+            </div>
+          </div>
+          <button onclick="startTimer(90)" class="text-xs bg-[#274DEA] hover:bg-[#10288C] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 90s
+          </button>
+        </div>
+      </div>
+
+      <!-- Hip Thrust -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#274DEA]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#274DEA] bg-[#274DEA]/10 px-2 py-0.5 rounded-md">Glúteos & Cadera</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">2. Puente de Glúteo (Hip Thrust con Mancuerna)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">3 series x 12 reps</span>
+        </div>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/29OfN4ztW_g?rel=0" 
+            title="Dumbbell Hip Thrust Form Tutorial" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="number" id="weight-hipthrust" placeholder="Peso (lbs)" class="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#274DEA]" onblur="saveWeight('hipthrust', this.value)">
+            <div class="flex items-center gap-1.5">
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S1</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S2</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#274DEA]"> S3</label>
+            </div>
+          </div>
+          <button onclick="startTimer(75)" class="text-xs bg-[#274DEA] hover:bg-[#10288C] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 75s
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MARTES (TORSO & CORE) -->
+    <div id="content-martes" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-dumbbell text-[#6338EE]"></i>
+            Martes: Torso (Espalda & Pecho) + Core
+          </h2>
+          <p class="text-xs text-slate-500">Fuerza de tren superior e hipertrofia</p>
+        </div>
+        <span class="text-xs bg-[#6338EE]/10 text-[#6338EE] border border-[#6338EE]/20 font-bold px-3 py-1 rounded-full">45 Min</span>
+      </div>
+
+      <!-- Jalón al Pecho -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Espalda / Jalón</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">1. Jalón al Pecho en Polea (Lat Pulldown)</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">3 series x 10-12 reps</span>
+        </div>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/SALxEARiMkw?rel=0" 
+            title="How to do Lat Pulldowns Properly" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="number" id="weight-jalon" placeholder="Peso (lbs)" class="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#6338EE]" onblur="saveWeight('jalon', this.value)">
+            <div class="flex items-center gap-1.5">
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S1</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S2</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S3</label>
+            </div>
+          </div>
+          <button onclick="startTimer(75)" class="text-xs bg-[#6338EE] hover:bg-[#10288C] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 75s
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: JUEVES (PIERNA & GLÚTEO) -->
+    <div id="content-jueves" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-person-walking-arrow-right text-[#10288C]"></i>
+            Jueves: Pierna (Cadena Posterior & Glúteos)
+          </h2>
+          <p class="text-xs text-slate-500">Fortalecimiento enfocado en glúteos e isquios</p>
+        </div>
+        <span class="text-xs bg-[#10288C]/10 text-[#10288C] border border-[#10288C]/20 font-bold px-3 py-1 rounded-full">50 Min</span>
+      </div>
+
+      <!-- Peso Muerto Rumano -->
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#10288C]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10288C] bg-[#10288C]/10 px-2 py-0.5 rounded-md">Isquios & Glúteos</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">1. Peso Muerto Rumano con Mancuernas</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">3 series x 10-12 reps</span>
+        </div>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/hQgFixeXdZo?rel=0" 
+            title="Dumbbell Romanian Deadlift Form" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="number" id="weight-rdl" placeholder="Peso c/u" class="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#10288C]" onblur="saveWeight('rdl', this.value)">
+            <div class="flex items-center gap-1.5">
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#10288C]"> S1</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#10288C]"> S2</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#10288C]"> S3</label>
+            </div>
+          </div>
+          <button onclick="startTimer(90)" class="text-xs bg-[#10288C] hover:bg-[#6338EE] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 90s
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: VIERNES (TORSO & BRAZOS) -->
+    <div id="content-viernes" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-hand-fist text-[#6338EE]"></i>
+            Viernes: Torso, Brazos & Hombros
+          </h2>
+          <p class="text-xs text-slate-500">Fuerza muscular de tren superior</p>
+        </div>
+        <span class="text-xs bg-[#6338EE]/10 text-[#6338EE] border border-[#6338EE]/20 font-bold px-3 py-1 rounded-full">45 Min</span>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 border-l-4 border-l-[#6338EE]">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6338EE] bg-[#6338EE]/10 px-2 py-0.5 rounded-md">Espalda / Tracción</span>
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 mt-1">1. Remo con Mancuerna Apoyada en Banco</h3>
+          </div>
+          <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">3 series x 10 reps/lado</span>
+        </div>
+
+        <div class="video-container mb-3 shadow-sm">
+          <iframe 
+            src="https://www.youtube-nocookie.com/embed/roCP6wCXPqo?rel=0" 
+            title="Single Arm Dumbbell Row Tutorial" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <input type="number" id="weight-remo" placeholder="Peso (lbs)" class="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#6338EE]" onblur="saveWeight('remo', this.value)">
+            <div class="flex items-center gap-1.5">
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S1</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S2</label>
+              <label class="cursor-pointer bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-700"><input type="checkbox" onchange="toggleSet(this)" class="w-3.5 h-3.5 rounded text-[#6338EE]"> S3</label>
+            </div>
+          </div>
+          <button onclick="startTimer(60)" class="text-xs bg-[#6338EE] hover:bg-[#10288C] text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-stopwatch"></i> Descanso 60s
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: BITÁCORA -->
+    <div id="content-progreso" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-[#274DEA]"></i>
+            Bitácora de Cargas Guardadas
+          </h2>
+          <p class="text-xs text-slate-500">Histórico de tus cargas anotadas</p>
+        </div>
+        <button onclick="clearWeights()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-xl border border-rose-200 transition">
+          <i class="fa-solid fa-trash mr-1"></i> Reiniciar
+        </button>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 border border-slate-200">
+        <div id="weights-log-container" class="space-y-2 text-xs divide-y divide-slate-100">
+          <p class="text-slate-500 text-center py-4">Ingresa tus cargas en los campos de cada ejercicio para ver tu resumen aquí.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FLOATING TIMER WIDGET -->
+  <div id="timer-widget" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-3 flex items-center justify-between hidden transition-all duration-300">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#6338EE]/10 border border-[#6338EE]/20 text-[#6338EE] flex items-center justify-center font-bold text-sm">
+        <i class="fa-solid fa-stopwatch text-base animate-pulse"></i>
+      </div>
+      <div>
+        <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Temporizador Activo</div>
+        <div id="timer-display" class="font-extrabold text-xl text-slate-800 tracking-widest">00:00</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="addTimerTime(15)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-lg border border-slate-200">+15s</button>
+      <button onclick="stopTimer()" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center hover:bg-rose-100">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('bg-white', 'text-slate-600');
+      });
+
+      const targetContent = document.getElementById('content-' + tabId);
+      const targetBtn = document.getElementById('tab-btn-' + tabId);
+
+      if (targetContent) targetContent.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('tab-active');
+        targetBtn.classList.remove('bg-white', 'text-slate-600');
+      }
+
+      if (tabId === 'progreso') {
+        renderProgressLog();
+      }
+    }
+
+    function toggleSet(checkbox) {
+      const parentLabel = checkbox.closest('label');
+      if (checkbox.checked) {
+        parentLabel.classList.add('bg-[#EAF6AD]/60', 'border-[#B6DB00]', 'text-slate-900', 'font-bold');
+        parentLabel.classList.remove('bg-slate-100', 'text-slate-700');
+      } else {
+        parentLabel.classList.remove('bg-[#EAF6AD]/60', 'border-[#B6DB00]', 'text-slate-900', 'font-bold');
+        parentLabel.classList.add('bg-slate-100', 'text-slate-700');
+      }
+    }
+
+    // Storage logic
+    function saveWeight(exerciseKey, value) {
+      if (!value) return;
+      const weights = JSON.parse(localStorage.getItem('fitflow_weights') || '{}');
+      weights[exerciseKey] = {
+        weight: value,
+        date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+      };
+      localStorage.setItem('fitflow_weights', JSON.stringify(weights));
+    }
+
+    function loadSavedWeights() {
+      const weights = JSON.parse(localStorage.getItem('fitflow_weights') || '{}');
+      for (const [key, data] of Object.entries(weights)) {
+        const input = document.getElementById('weight-' + key);
+        if (input) input.value = data.weight;
+      }
+    }
+
+    function renderProgressLog() {
+      const container = document.getElementById('weights-log-container');
+      const weights = JSON.parse(localStorage.getItem('fitflow_weights') || '{}');
+      const labelsMap = {
+        'prensa': 'Prensa de Piernas',
+        'hipthrust': 'Puente de Glúteo (Hip Thrust)',
+        'jalon': 'Jalón al Pecho',
+        'rdl': 'Peso Muerto Rumano',
+        'remo': 'Remo con Mancuerna'
+      };
+
+      if (Object.keys(weights).length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-center py-4">Aún no has guardado registros de pesos.</p>`;
+        return;
+      }
+
+      let html = '';
+      for (const [key, data] of Object.entries(weights)) {
+        html += `
+          <div class="flex items-center justify-between py-2.5">
+            <div>
+              <span class="font-bold text-slate-800 text-xs">${labelsMap[key] || key}</span>
+              <span class="text-[10px] text-slate-400 ml-2">(${data.date})</span>
+            </div>
+            <span class="font-extrabold text-[#10288C] bg-[#EAF6AD]/60 px-3 py-1 rounded-lg border border-[#B6DB00] text-xs">${data.weight} lbs</span>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    function clearWeights() {
+      localStorage.removeItem('fitflow_weights');
+      document.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
+      renderProgressLog();
+    }
+
+    // Timer Logic
+    let timerInterval = null;
+    let secondsLeft = 0;
+
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      secondsLeft = seconds;
+      const widget = document.getElementById('timer-widget');
+      widget.classList.remove('hidden');
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          playBeepSound();
+          document.getElementById('timer-display').innerText = '¡LISTO!';
+          setTimeout(() => {
+            widget.classList.add('hidden');
+          }, 3000);
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function addTimerTime(secs) {
+      secondsLeft += secs;
+      updateTimerDisplay();
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      document.getElementById('timer-widget').classList.add('hidden');
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      document.getElementById('timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } catch (e) {
+        console.log('Audio Context restricted');
+      }
+    }
+
+    window.onload = function() {
+      loadSavedWeights();
+    };
+  </script>
+</body>
+</html>
