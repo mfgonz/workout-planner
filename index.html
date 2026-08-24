@@ -79,6 +79,12 @@
       height: 100%;
       border: 0;
     }
+
+    /* Fallback so day tabs still switch correctly if the Tailwind CDN
+       script fails to load (network restrictions, ad-blockers, etc.) */
+    .tab-content.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-[#EAF6AD] selection:text-[#10288C] pb-36 bg-[#f4f5f9] text-slate-800 overflow-y-auto">
